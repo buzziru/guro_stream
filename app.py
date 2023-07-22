@@ -21,7 +21,7 @@ st.text(s)
 
 from PIL import Image
 
-img = Image.open('특일정보.jpg')
+img = Image.open('특일정보.JPG')
 st.image(img, use_column_width=True)
 
 hol_23 = pd.read_csv('data/holidays_2023.csv', index_col=0)
