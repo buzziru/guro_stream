@@ -8,7 +8,7 @@ st.write(' ')
 st.write('### 지하철 원본 데이터')
 
 
-filepath = 'data/서울교통공사_역별 일별 시간대별 승하차인원 정보_UTF8.csv.csv'
+filepath = 'data/서울교통공사_역별 일별 시간대별 승하차인원 정보_UTF8.csv'
 df = pd.read_csv(filepath, encoding='utf-8', index_col=0)
 
 st.dataframe(df)
