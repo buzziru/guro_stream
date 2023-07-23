@@ -24,8 +24,15 @@ from PIL import Image
 
 img = Image.open(os.path.join(os.path.dirname(__file__), '특일정보.JPG'))
 
+st.write(' ')
+st.write(' ')
+
 st.image(img, use_column_width=True)
 
+st.write(' ')
+st.write(' ')
+
+st.write('#### 23년도 공휴일')
 hol_23 = pd.read_csv('data/holidays_2023.csv', index_col=0)
 st.dataframe(hol_23)
 
@@ -61,35 +68,54 @@ st.code(code2, language='python')
 
 import streamlit.components.v1 as components
 
-with open('map_visual/seoul_result_tot.html', 'r', encoding='utf-8') as f:
-    tot = f.read()
-st.write('### 서울시 지하철 노선')
-components.html(tot, width=1000, height=700)
+st.write('## 서울시 전체 노선')
+seoul1, seoul2 = st.tabs(['역별 이용인원', '지하철 이용인원 및 인구'])
 
-with open('map_visual/seoul_subway_pop.html', 'r', encoding='utf-8') as f:
-    tot_pop = f.read()
-st.write('### 서울시 지하철 노선과 주민등록인구')
-components.html(tot_pop, width=1000, height=700)
+with seoul1:
+    st.write('#### 역별 이용인원')
+    with open('map_visual/seoul_result_tot.html', 'r', encoding='utf-8') as f:
+        tot = f.read()
+    components.html(tot, width=1000, height=700)
 
-with open('map_visual/seoul_diff_07_pop.html', 'r', encoding='utf-8') as f:
-    diff_07 = f.read()
-st.write('### 월요일 07시 승하차 차이')
-components.html(diff_07, width=1000, height=700)
+with seoul2:
+    st.write('#### 역별 이용인원 및 주민등록인구')
+    with open('map_visual/seoul_subway_pop.html', 'r', encoding='utf-8') as f:
+        tot_pop = f.read()
+    components.html(tot_pop, width=1000, height=700)
 
-with open('map_visual/seoul_diff_08_pop.html', 'r', encoding='utf-8') as f:
-    diff_08 = f.read()
-st.write('### 월요일 08시 승하차 차이')
-components.html(diff_08, width=1000, height=700)
 
-with open('map_visual/seoul_diff_18_pop.html', 'r', encoding='utf-8') as f:
-    diff_18 = f.read()
-st.write('### 월요일 18시 승하차 차이')
-components.html(diff_18, width=1000, height=700)
+st.write(' ')
+st.write('## 출근시간 승하차 차이')
+morning07, morning08 = st.tabs(['07시', '08시'])
 
-with open('map_visual/seoul_diff_19_pop.html', 'r', encoding='utf-8') as f:
-    diff_19 = f.read()
-st.write('### 월요일 19시 승하차 차이')
-components.html(diff_19, width=1000, height=700)
+with morning07:
+    st.write('#### 월요일 07시')
+    with open('map_visual/seoul_diff_07_pop.html', 'r', encoding='utf-8') as f:
+        diff_07 = f.read()
+    components.html(diff_07, width=1000, height=700)
+
+with morning08:
+    st.write('#### 월요일 08시')
+    with open('map_visual/seoul_diff_08_pop.html', 'r', encoding='utf-8') as f:
+        diff_08 = f.read()
+    components.html(diff_08, width=1000, height=700)
+
+st.write(' ')
+st.write('## 퇴근시간 승하차 차이')
+night18, night19 = st.tabs(['18시', '19시'])
+
+with night18:
+    st.write('#### 월요일 18시')
+    with open('map_visual/seoul_diff_18_pop.html', 'r', encoding='utf-8') as f:
+        diff_18 = f.read()
+    components.html(diff_18, width=1000, height=700)
+
+with night19:
+    st.write('#### 월요일 19시')
+    with open('map_visual/seoul_diff_19_pop.html', 'r', encoding='utf-8') as f:
+        diff_19 = f.read()
+    components.html(diff_19, width=1000, height=700)
+
 
 filepath = 'data/전처리/아침승하차차이 상위_하위.csv'
 morning = pd.read_csv(filepath, encoding='utf-8', index_col=0)
@@ -100,7 +126,7 @@ import altair as alt
 
 chart = alt.Chart(morning).mark_bar().encode(
     x=alt.X('역명', sort='-y'),
-    y='08-09시간대',
+    y=alt.Y('08-09시간대', title='승하차 차이'),
     color=alt.condition(
         alt.datum['08-09시간대'] > 0,  # 조건
         alt.value('blue'),  # 참일 때 값
@@ -108,6 +134,7 @@ chart = alt.Chart(morning).mark_bar().encode(
     )
 ).properties(width=550, height=600)
 
+st.write(' ')
 st.markdown("<h1 style='text-align: center; color: black;'>출근시간 승하차 차이</h1>", unsafe_allow_html=True)
 st.altair_chart(chart, use_container_width=True)
 
@@ -116,12 +143,12 @@ guro = pd.read_csv(file_guro, encoding='utf-8', index_col=0)
 
 chart_guro = (
     alt.Chart(guro.reset_index())
-    .mark_line()
+    .mark_line(color='green', strokeDash=[5,1])
     .encode(
         x=alt.X('index:O', title='시간대'),  
         y=alt.Y('14:Q', title='승하차 차이'),  
-    )
-    .properties(title='구디역 승하차 차이')
+    ) 
 )
-
+st.write(' ')
+st.markdown("<h1 style='text-align: center; color: black;'>구디역 시간별 승하차 추이</h1>", unsafe_allow_html=True)
 st.altair_chart(chart_guro, use_container_width=True)
