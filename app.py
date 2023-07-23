@@ -94,8 +94,6 @@ components.html(diff_19, width=1000, height=700)
 filepath = 'data/전처리/아침승하차차이 상위_하위.csv'
 morning = pd.read_csv(filepath, encoding='utf-8', index_col=0)
 
-import seaborn as sns
-
 morning = morning.sort_values('08-09시간대', ascending=False)
 
 import altair as alt
