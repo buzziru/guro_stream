@@ -19,9 +19,11 @@ s = buf.getvalue()
 
 st.text(s)
 
+import os
 from PIL import Image
 
-img = Image.open('특일정보.JPG')
+img = Image.open(os.path.join(os.path.dirname(__file__), '특일정보.jpg'))
+
 st.image(img, use_column_width=True)
 
 hol_23 = pd.read_csv('data/holidays_2023.csv', index_col=0)
@@ -88,3 +90,41 @@ with open('map_visual/seoul_diff_19_pop.html', 'r', encoding='utf-8') as f:
     diff_19 = f.read()
 st.write('### 월요일 19시 승하차 차이')
 components.html(diff_19, width=1000, height=700)
+
+filepath = 'data/전처리/아침승하차차이 상위_하위.csv'
+morning = pd.read_csv(filepath, encoding='utf-8', index_col=0)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+morning = morning.sort_values('08-09시간대', ascending=False)
+
+import altair as alt
+
+chart = alt.Chart(morning).mark_bar().encode(
+    x=alt.X('역명', sort='-y'),
+    y='08-09시간대',
+    color=alt.condition(
+        alt.datum['08-09시간대'] > 0,  # 조건
+        alt.value('blue'),  # 참일 때 값
+        alt.value('red')  # 거짓일 때 값
+    )
+).properties(width=550, height=600)
+
+st.markdown("<h1 style='text-align: center; color: black;'>출근시간 승하차 차이</h1>", unsafe_allow_html=True)
+st.altair_chart(chart, use_container_width=True)
+
+file_guro = 'data/전처리/구로_승하차차이0723.csv'
+guro = pd.read_csv(file_guro, encoding='utf-8', index_col=0)
+
+chart_guro = (
+    alt.Chart(guro.reset_index())
+    .mark_line()
+    .encode(
+        x=alt.X('index:O', title='시간대'),  
+        y=alt.Y('14:Q', title='승하차 차이'),  
+    )
+    .properties(title='구디역 승하차 차이')
+)
+
+st.altair_chart(chart_guro, use_container_width=True)
