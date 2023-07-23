@@ -22,7 +22,7 @@ st.text(s)
 import os
 from PIL import Image
 
-img = Image.open(os.path.join(os.path.dirname(__file__), '특일정보.jpg'))
+img = Image.open(os.path.join(os.path.dirname(__file__), '특일정보.JPG'))
 
 st.image(img, use_column_width=True)
 
