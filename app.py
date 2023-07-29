@@ -266,8 +266,7 @@ if add_select == '기상 데이터 전처리':
     ndf['시간당 강수량(mm)'] = ndf['누적강수량(mm)'] - ndf['강수량차이']
     """
     st.code(code_weather, language='python')
-    
-    st.write(' ')
+        
     st.write('##### 강수량 분류')
     code_rain = """
     def rain(x):
@@ -286,47 +285,48 @@ if add_select == '기상 데이터 전처리':
     """
     st.code(code_rain, language='python')
     
-    st.write(' ')
-    st.write('##### 폭염일')
-    code_heat = """
-    def heat_wave(x):
-    heat_dates = [
-        '2022-07-02',
-        '2022-07-03',
-        '2022-07-05',
-        '2022-07-06',
-        '2022-07-10',
-        '2022-07-26',
-        '2022-07-27',
-        '2022-07-28',
-        '2022-07-29',
-        '2022-07-30',
-    ]
-    if x.strftime('%Y-%m-%d') in heat_dates:
-        return 'True'
-    else:
-        return 'False'
-    """
-    st.code(code_heat, language='python')
-
-    st.write(' ')
-    st.write('##### 한파일')
-    code_cold = """
-    def cold_wave(x):
-        cold_dates = [
-            '2022-12-18',
-            '2022-12-19',
-            '2022-12-23',
-            '2022-12-24',
-            '2023-01-24',
-            '2023-01-25',
+    heat, cold = st.tabs(['폭염', '한파'])
+    with heat:
+        st.write('##### 폭염일')
+        code_heat = """
+        def heat_wave(x):
+        heat_dates = [
+            '2022-07-02',
+            '2022-07-03',
+            '2022-07-05',
+            '2022-07-06',
+            '2022-07-10',
+            '2022-07-26',
+            '2022-07-27',
+            '2022-07-28',
+            '2022-07-29',
+            '2022-07-30',
         ]
-        if x.strftime('%Y-%m-%d') in cold_dates:
+        if x.strftime('%Y-%m-%d') in heat_dates:
             return 'True'
         else:
             return 'False'
-    """
-    st.code(code_cold, language='python')
+        """
+        st.code(code_heat, language='python')
+
+    with cold:
+        st.write('##### 한파일')
+        code_cold = """
+        def cold_wave(x):
+            cold_dates = [
+                '2022-12-18',
+                '2022-12-19',
+                '2022-12-23',
+                '2022-12-24',
+                '2023-01-24',
+                '2023-01-25',
+            ]
+            if x.strftime('%Y-%m-%d') in cold_dates:
+                return 'True'
+            else:
+                return 'False'
+        """
+        st.code(code_cold, language='python')
     
     st.write(' ')
     st.write('### 서울 기상 관측 정보 (전처리)')
