@@ -252,8 +252,8 @@ if add_select == '붐비는 시간':
 
 if add_select == '기상 데이터 전처리':
     st.write('### 서울 기상 관측 정보 (원본)')
-    weather1_path = 'data/기상/원본_기상/관악_2306_origin.csv'
-    weather1 = pd.read_csv(weather1_path, encoding='CP1252')
+    weather1_path = 'data/기상/원본_기상/관악_2306_origin_utf_8.csv'
+    weather1 = pd.read_csv(weather1_path, encoding='utf-8')
     st.dataframe(weather1)
     st.write(' ')
     st.write('##### 시간당 강수량')
