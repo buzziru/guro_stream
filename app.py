@@ -5,7 +5,6 @@ import os
 from PIL import Image
 import streamlit.components.v1 as components
 import altair as alt
-import seaborn as sns
 import plotly.graph_objects as go
 import plotly.express as px
 
