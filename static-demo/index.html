@@ -16,7 +16,7 @@
     --fg:#f7f8f8; --fg-2:#d0d6e0; --muted:#8a8f98; --tertiary:#62666d;
     --accent:#5e6ad2; --accent-light:#828fff;
     --good:#4cc38a;
-    --app-h:620px;
+    --app-h:700px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);height:100%;}
@@ -100,7 +100,17 @@
 
   /* overview lower grid */
   .ov-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;}
-  @media(max-width:760px){.ov-grid{grid-template-columns:1fr;}.kpis{grid-template-columns:repeat(2,1fr);}}
+  .ov-grid.even{grid-template-columns:1fr 1fr;}
+  @media(max-width:760px){.ov-grid,.ov-grid.even{grid-template-columns:1fr;}.kpis{grid-template-columns:repeat(2,1fr);}}
+
+  /* overview integrated data/methods */
+  .steps,.srclist{list-style:none;margin:0;padding:0;}
+  .steps li{position:relative;padding:5px 0 5px 15px;font-size:12.5px;color:var(--fg-2);line-height:1.5;}
+  .steps li::before{content:"";position:absolute;left:1px;top:11px;width:5px;height:5px;border-radius:50%;background:var(--accent);}
+  .srclist li{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+  .srclist li:last-child{border-bottom:0;}
+  .srclist li b{color:var(--fg);font-weight:600;min-width:40px;flex:none;}
+  .srclist li span{color:var(--muted);}
 
   /* diverging column chart */
   .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);}
@@ -144,12 +154,6 @@
   .map-frame iframe{display:block;width:100%;height:100%;border:0;background:#fff;}
   .map-cap{font-size:11px;color:var(--tertiary);margin:0;flex:none;}
 
-  /* data view */
-  .dtable{width:100%;border-collapse:collapse;font-size:12.5px;}
-  .dtable th{text-align:left;color:var(--tertiary);font-weight:500;font-size:11px;letter-spacing:.04em;padding:0 10px 9px;border-bottom:1px solid var(--border);}
-  .dtable td{padding:11px 10px;border-bottom:1px solid var(--border);color:var(--fg-2);vertical-align:top;}
-  .dtable td b{color:var(--fg);font-weight:600;}
-  .dtable tr:last-child td{border-bottom:0;}
   .stack{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;}
   .stack span{background:var(--elevated);border:1px solid var(--border);border-radius:9999px;padding:5px 11px;font-size:11.5px;color:var(--fg-2);}
 
@@ -168,14 +172,13 @@
   <!-- ── sidebar ── -->
   <aside class="side">
     <div class="brand">
-      <div class="brand-mark">🚇</div>
+      <div class="brand-mark"></div>
       <div class="brand-txt"><b>지하철 통근 대시보드</b><span>guro_stream</span></div>
     </div>
     <p class="nav-label">분석</p>
     <button class="nav-item active" data-view="overview"><span class="ico">▦</span><span class="lbl">개요</span></button>
     <button class="nav-item" data-view="ridership"><span class="ico">◉</span><span class="lbl">이용인원 지도</span></button>
     <button class="nav-item" data-view="commute"><span class="ico">⇄</span><span class="lbl">출퇴근 흐름</span></button>
-    <button class="nav-item" data-view="data"><span class="ico">▤</span><span class="lbl">데이터 · 방법</span></button>
     <div class="nav-spacer"></div>
     <div class="nav-foot">
       <a class="nav-ext" href="https://github.com/buzziru/guro_stream" target="_blank" rel="noopener"><span class="ico">↗</span><span>GitHub 저장소</span></a>
@@ -225,6 +228,31 @@
           <div id="rank-body"></div>
         </div>
       </div>
+
+      <div class="ov-grid even" style="margin-top:14px;">
+        <div class="card">
+          <div class="card-h"><h3>처리 · 모델링</h3><span class="note">공공데이터 수집 → 통합 → 모델링</span></div>
+          <ul class="steps">
+            <li>역·시간대 복합 키로 4개 영역 조인 → 350만 행·50변수 데이터셋 구축</li>
+            <li>결측 처리 및 파생 피처 생성 — 요일·공휴일·폭염/한파</li>
+            <li>단계별 중간 결과 저장으로 대용량 전처리 파이프라인 안정화</li>
+            <li>folium/Leaflet 기반 역별·시간대별 지도 시각화</li>
+            <li>회귀 5종(Linear·Ridge·RandomForest·XGBoost·LightGBM) 교차검증 비교 → LightGBM 최우수</li>
+          </ul>
+          <div class="stack">
+            <span>Python</span><span>pandas</span><span>scikit-learn</span><span>LightGBM</span><span>folium</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>수집·통합 데이터</h3><span class="note">직접 수집</span></div>
+          <ul class="srclist">
+            <li><b>지하철</b><span>서울 열린데이터광장 · 역별·시간대별 승하차</span></li>
+            <li><b>기후</b><span>공공데이터포털 · 기온·강수량·습도</span></li>
+            <li><b>인구</b><span>행정안전부 · 동별 주민등록인구</span></li>
+            <li><b>버스</b><span>서울 열린데이터광장 · 노선·정류장(환승 피처)</span></li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <!-- ridership map -->
@@ -253,31 +281,6 @@
       </div>
     </section>
 
-    <!-- data / methods -->
-    <section class="view" id="view-data">
-      <div class="card" style="margin-bottom:14px;">
-        <div class="card-h"><h3>수집·통합 데이터</h3><span class="note">공공데이터 직접 수집 · 복합 키 조인</span></div>
-        <table class="dtable">
-          <thead><tr><th>영역</th><th>출처</th><th>내용</th></tr></thead>
-          <tbody>
-            <tr><td><b>지하철</b></td><td>서울 열린데이터광장</td><td>역별·시간대별 승하차 인원</td></tr>
-            <tr><td><b>기후</b></td><td>공공데이터포털</td><td>기온·강수량·습도 (폭염/한파 파생)</td></tr>
-            <tr><td><b>인구</b></td><td>행정안전부</td><td>동별 주민등록인구</td></tr>
-            <tr><td><b>버스</b></td><td>서울 열린데이터광장</td><td>노선·정류장 (환승 패턴 피처)</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>처리 · 모델링 스택</h3></div>
-        <p style="font-size:12.5px;color:var(--fg-2);margin:0;line-height:1.7;">
-          역·시간대 복합 키로 4개 영역을 조인해 350만 행·50변수 데이터셋 구축. pandas 한계 구간은 MariaDB 중간 저장으로 처리. 지도 시각화는 folium/Leaflet, 예측은 회귀 5종(Linear·Ridge·RandomForest·XGBoost·LightGBM)을 교차검증 비교 — LightGBM 최우수.
-        </p>
-        <div class="stack">
-          <span>Python</span><span>pandas</span><span>MariaDB</span><span>scikit-learn</span><span>LightGBM</span><span>folium</span>
-        </div>
-        <p style="font-size:11px;color:var(--tertiary);margin:14px 0 0;">원본 Streamlit 앱: gurostream-process.streamlit.app · 이 대시보드는 핵심 인사이트만 큐레이션한 정적 재구성본입니다.</p>
-      </div>
-    </section>
   </div>
 </div>
 
@@ -290,7 +293,6 @@ const VIEW_META = {
   overview:  ['개요','지하철·기후·인구·버스 통합 데이터로 본 서울 통근 흐름'],
   ridership: ['이용인원 지도','역별 지하철 총 이용인원 분포'],
   commute:   ['출퇴근 흐름','시간대별 순승하차(승차−하차) — 아침·저녁 반전'],
-  data:      ['데이터 · 방법','수집·통합한 공공데이터와 처리·모델링 스택'],
 };
 function activateMap(fr){ if(fr && !fr.src && fr.dataset.src) fr.src = fr.dataset.src; }
 function showView(name){
@@ -300,6 +302,7 @@ function showView(name){
   $('t-sub').textContent = VIEW_META[name][1];
   // lazy-load the active map(s) in the shown view
   document.querySelectorAll('#view-'+name+' .map-frame:not([hidden]) iframe').forEach(activateMap);
+  syncHeight();
 }
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
 
@@ -357,19 +360,23 @@ document.querySelectorAll('.tabs[data-group="rank"] .tab').forEach(tab=>{
 });
 renderRank('in');
 
-// ── 고정 높이 동기화 (부모 포트폴리오가 수신) ──
-function appHeight(){ return window.innerWidth < 560 ? 720 : 620; }
+// ── 높이 동기화 (뷰별 정확한 높이를 부모 포트폴리오에 전달) ──
+// 개요: 콘텐츠에 꼭 맞춰 내부 스크롤 없이 한 화면. 지도: 지도가 채울 고정 높이.
+function curHeight(){
+  const top=document.querySelector('.topbar').offsetHeight;
+  const active=document.querySelector('.view.active');
+  if(active && active.id==='view-overview') return top + active.scrollHeight + 10;
+  return window.innerWidth < 560 ? 560 : 620;
+}
 let lastH=0;
-function postHeight(){
-  const h=appHeight();
+function syncHeight(){
+  const h=Math.round(curHeight());
   document.documentElement.style.setProperty('--app-h', h+'px');
   if(h!==lastH){ lastH=h; parent.postMessage({type:'subway-demo-height',height:h},'*'); }
 }
-window.addEventListener('load',postHeight);
-window.addEventListener('resize',postHeight);
-postHeight();
-
-// 기본 뷰의 지도는 진입 시 로드(개요는 지도 없음)
+window.addEventListener('load',syncHeight);
+window.addEventListener('resize',syncHeight);
+syncHeight();
 </script>
 </body>
 </html>
