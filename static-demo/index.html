@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>서울 지하철 이용·통근 패턴 — 인터랙티브 대시보드</title>
+<title>서울 지하철 이용·통근 패턴 — 대시보드</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -16,275 +16,360 @@
     --fg:#f7f8f8; --fg-2:#d0d6e0; --muted:#8a8f98; --tertiary:#62666d;
     --accent:#5e6ad2; --accent-light:#828fff;
     --good:#4cc38a;
+    --app-h:620px;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--bg);}
+  html,body{margin:0;padding:0;background:var(--bg);height:100%;}
   body{
     font-family:'Pretendard',system-ui,-apple-system,sans-serif;
-    color:var(--fg); -webkit-font-smoothing:antialiased;
-    line-height:1.6; letter-spacing:-0.01em; word-break:keep-all;
+    color:var(--fg);-webkit-font-smoothing:antialiased;
+    line-height:1.55;letter-spacing:-0.01em;word-break:keep-all;
   }
   .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
-  .demo{max-width:960px;margin:0 auto;padding:26px 22px 32px;}
 
-  /* header */
-  .demo-header{margin-bottom:22px;}
-  .demo-title{font-size:22px;font-weight:600;letter-spacing:-0.03em;margin:0 0 7px;}
-  .demo-sub{font-size:13.5px;color:var(--muted);margin:0;max-width:70ch;}
+  /* ── app shell ── */
+  .app{display:flex;height:var(--app-h);background:var(--bg);overflow:hidden;}
 
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
-  .chip{
-    display:flex;align-items:baseline;gap:7px;
-    background:var(--elevated);border:1px solid var(--border);
-    border-radius:9999px;padding:6px 13px;
+  /* sidebar */
+  .side{
+    width:212px;flex:none;display:flex;flex-direction:column;
+    background:var(--surface);border-right:1px solid var(--border);
+    padding:18px 14px;gap:6px;
   }
-  .chip b{font-size:14px;font-weight:600;letter-spacing:-0.02em;}
-  .chip span{font-size:11.5px;color:var(--tertiary);}
-
-  /* section */
-  .section{margin-top:26px;}
-  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 12px;flex-wrap:wrap;}
-  .section-title{font-size:16px;font-weight:600;letter-spacing:-0.02em;margin:0;}
-  .section-note{font-size:12.5px;color:var(--muted);margin:0;max-width:62ch;}
-
-  .panel{
-    background:var(--surface);border:1px solid var(--border);
-    border-radius:16px;padding:16px;
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 16px;}
+  .brand-mark{
+    width:30px;height:30px;border-radius:8px;flex:none;
+    background:linear-gradient(135deg,var(--accent),#3a44a0);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
   }
+  .brand-txt b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-0.02em;line-height:1.2;}
+  .brand-txt span{font-size:10.5px;color:var(--tertiary);}
 
-  /* tabs */
-  .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
-  .tab{
-    padding:7px 14px;border-radius:8px;cursor:pointer;
-    background:var(--elevated);border:1px solid var(--border);
-    color:var(--muted);font-size:12.5px;font-family:inherit;
-    transition:background .15s,color .15s,border-color .15s;
+  .nav-label{font-size:10px;letter-spacing:.14em;color:var(--tertiary);text-transform:uppercase;margin:6px 8px 4px;}
+  .nav-item{
+    display:flex;align-items:center;gap:11px;width:100%;
+    padding:9px 11px;border-radius:8px;cursor:pointer;
+    background:none;border:1px solid transparent;
+    color:var(--muted);font-size:13px;font-family:inherit;text-align:left;
+    transition:background .14s,color .14s;position:relative;
   }
-  .tab:hover{color:var(--fg-2);border-color:var(--border-mid);}
-  .tab.active{background:var(--deep);color:var(--fg);border-color:var(--accent);}
-
-  /* map */
-  .map-wrap{
-    border:1px solid var(--border);border-radius:12px;overflow:hidden;
-    background:var(--deep);
+  .nav-item .ico{width:17px;text-align:center;font-size:14px;flex:none;}
+  .nav-item:hover{background:var(--elevated);color:var(--fg-2);}
+  .nav-item.active{background:var(--elevated);color:var(--fg);border-color:var(--border);}
+  .nav-item.active::before{
+    content:"";position:absolute;left:-14px;top:50%;transform:translateY(-50%);
+    width:3px;height:18px;border-radius:0 3px 3px 0;background:var(--accent);
   }
-  .map-wrap iframe{display:block;width:100%;height:520px;border:0;background:#fff;}
-  .map-cap{font-size:12px;color:var(--tertiary);margin:10px 2px 0;}
+  .nav-spacer{flex:1;}
+  .nav-foot{border-top:1px solid var(--border);padding-top:10px;margin-top:4px;}
+  .nav-ext{
+    display:flex;align-items:center;gap:11px;padding:8px 11px;border-radius:8px;
+    color:var(--tertiary);font-size:12px;text-decoration:none;transition:color .14s,background .14s;
+  }
+  .nav-ext:hover{color:var(--fg-2);background:var(--elevated);}
 
-  /* legend */
-  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:0 2px 12px;font-size:12px;color:var(--muted);}
-  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+  /* main */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;}
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:18px 22px;border-bottom:1px solid var(--border);flex:none;
+  }
+  .topbar h1{font-size:18px;font-weight:600;letter-spacing:-0.03em;margin:0;}
+  .topbar p{font-size:12.5px;color:var(--muted);margin:3px 0 0;}
+  .topbar .meta{font-size:11px;color:var(--tertiary);text-align:right;white-space:nowrap;}
+  .topbar .meta b{color:var(--fg-2);font-weight:500;}
 
-  /* diverging column chart (구디역) */
-  .col-chart{display:flex;gap:3px;height:230px;align-items:stretch;padding:0 2px;}
+  .view{flex:1;min-height:0;padding:18px 22px;overflow:auto;display:none;}
+  .view.active{display:block;}
+  .view::-webkit-scrollbar{width:8px;height:8px;}
+  .view::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:8px;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 16px;}
+  .card-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px;}
+  .card-h h3{font-size:13.5px;font-weight:600;letter-spacing:-0.02em;margin:0;}
+  .card-h .note{font-size:11px;color:var(--tertiary);}
+
+  /* KPI row */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 14px;}
+  .kpi .k{font-size:10.5px;letter-spacing:.06em;color:var(--tertiary);text-transform:uppercase;margin:0 0 7px;}
+  .kpi .v{font-size:22px;font-weight:600;letter-spacing:-0.03em;line-height:1;}
+  .kpi .v small{font-size:12px;font-weight:400;color:var(--muted);margin-left:4px;letter-spacing:0;}
+  .kpi .bar{height:4px;border-radius:9999px;background:var(--deep);margin-top:11px;overflow:hidden;}
+  .kpi .bar i{display:block;height:100%;border-radius:9999px;background:var(--accent);}
+
+  /* overview lower grid */
+  .ov-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;}
+  @media(max-width:760px){.ov-grid{grid-template-columns:1fr;}.kpis{grid-template-columns:repeat(2,1fr);}}
+
+  /* diverging column chart */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+  .col-chart{display:flex;gap:3px;height:188px;align-items:stretch;padding:0 2px;}
   .col{flex:1;display:flex;flex-direction:column;min-width:0;}
   .col .up,.col .down{flex:1;display:flex;}
   .col .up{align-items:flex-end;}
   .col .down{align-items:flex-start;}
-  .col .bar{width:62%;margin:0 auto;border-radius:3px;transition:height .5s cubic-bezier(.2,.7,.3,1);}
+  .col .bar{width:64%;margin:0 auto;border-radius:3px;transition:height .5s cubic-bezier(.2,.7,.3,1);}
   .col .up .bar{background:var(--good);}
   .col .down .bar{background:var(--accent);}
   .col.peak .up .bar{background:var(--good);box-shadow:0 0 0 1px var(--good);}
   .col.peak .down .bar{background:var(--accent-light);box-shadow:0 0 0 1px var(--accent);}
   .col-zero{height:1px;background:var(--border-mid);margin:0 2px;}
-  .col-axis{display:flex;gap:3px;padding:6px 2px 0;}
-  .col-axis span{flex:1;text-align:center;font-size:9.5px;color:var(--tertiary);min-width:0;}
+  .col-axis{display:flex;gap:3px;padding:5px 2px 0;}
+  .col-axis span{flex:1;text-align:center;font-size:9px;color:var(--tertiary);min-width:0;}
 
-  /* ranked horizontal bars (출근 상위) */
-  .rank-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
-  @media(max-width:680px){.rank-grid{grid-template-columns:1fr;}}
-  .rank-label{font-size:12px;letter-spacing:.08em;color:var(--tertiary);text-transform:uppercase;margin:0 0 13px;}
-  .rb{margin-bottom:12px;}
+  /* ranking bars */
+  .tabs{display:flex;gap:5px;}
+  .tab{
+    padding:5px 11px;border-radius:7px;cursor:pointer;
+    background:var(--elevated);border:1px solid var(--border);
+    color:var(--muted);font-size:11.5px;font-family:inherit;transition:.14s;
+  }
+  .tab:hover{color:var(--fg-2);}
+  .tab.active{background:var(--deep);color:var(--fg);border-color:var(--accent);}
+  .rb{margin-bottom:11px;}
   .rb:last-child{margin-bottom:0;}
-  .rb-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;font-size:13px;}
+  .rb-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;font-size:12.5px;}
   .rb-name{color:var(--fg-2);}
-  .rb-name .line{color:var(--tertiary);font-size:11px;margin-left:6px;}
-  .rb-val{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px;}
-  .rb-track{height:7px;border-radius:9999px;background:var(--deep);overflow:hidden;}
+  .rb-name .line{color:var(--tertiary);font-size:10.5px;margin-left:5px;}
+  .rb-val{color:var(--muted);font-variant-numeric:tabular-nums;font-size:11.5px;}
+  .rb-track{height:6px;border-radius:9999px;background:var(--deep);overflow:hidden;}
   .rb-fill{height:100%;border-radius:9999px;transition:width .6s cubic-bezier(.2,.7,.3,1);}
   .rb.hi .rb-name{color:var(--fg);font-weight:500;}
 
-  .foot{margin-top:26px;font-size:11.5px;color:var(--tertiary);line-height:1.65;}
-  .foot b{color:var(--muted);font-weight:500;}
+  /* map view */
+  .map-view{height:100%;display:flex;flex-direction:column;gap:12px;}
+  .map-frame{flex:1;min-height:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--deep);}
+  .map-frame iframe{display:block;width:100%;height:100%;border:0;background:#fff;}
+  .map-cap{font-size:11px;color:var(--tertiary);margin:0;flex:none;}
+
+  /* data view */
+  .dtable{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .dtable th{text-align:left;color:var(--tertiary);font-weight:500;font-size:11px;letter-spacing:.04em;padding:0 10px 9px;border-bottom:1px solid var(--border);}
+  .dtable td{padding:11px 10px;border-bottom:1px solid var(--border);color:var(--fg-2);vertical-align:top;}
+  .dtable td b{color:var(--fg);font-weight:600;}
+  .dtable tr:last-child td{border-bottom:0;}
+  .stack{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;}
+  .stack span{background:var(--elevated);border:1px solid var(--border);border-radius:9999px;padding:5px 11px;font-size:11.5px;color:var(--fg-2);}
+
+  @media(max-width:560px){
+    .side{width:60px;padding:14px 8px;}
+    .brand-txt,.nav-item span.lbl,.nav-ext span,.nav-label{display:none;}
+    .nav-item{justify-content:center;padding:10px 0;}
+    .nav-item.active::before{left:-8px;}
+    .topbar{padding:14px 16px;}
+    .view{padding:14px 16px;}
+  }
 </style>
 </head>
 <body>
-<div class="demo">
-  <div class="demo-header">
-    <h1 class="demo-title">🚇 서울 지하철 이용·통근 패턴 대시보드</h1>
-    <p class="demo-sub">지하철·기후·인구·버스 4개 영역 공공데이터를 통합한 350만 행 분석 데이터셋에서, 역별 이용량과 출퇴근 순승하차 흐름을 시각화했습니다. 지도는 직접 클릭·확대할 수 있으며, 차트는 실측 집계값입니다.</p>
-    <div class="chips">
-      <div class="chip"><b>350만</b><span>행</span></div>
-      <div class="chip"><b>50</b><span>개 변수</span></div>
-      <div class="chip"><b>1–8</b><span>호선</span></div>
-      <div class="chip"><b>2022–2023</b><span>분석 기간</span></div>
+<div class="app">
+  <!-- ── sidebar ── -->
+  <aside class="side">
+    <div class="brand">
+      <div class="brand-mark">🚇</div>
+      <div class="brand-txt"><b>지하철 통근 대시보드</b><span>guro_stream</span></div>
     </div>
-  </div>
+    <p class="nav-label">분석</p>
+    <button class="nav-item active" data-view="overview"><span class="ico">▦</span><span class="lbl">개요</span></button>
+    <button class="nav-item" data-view="ridership"><span class="ico">◉</span><span class="lbl">이용인원 지도</span></button>
+    <button class="nav-item" data-view="commute"><span class="ico">⇄</span><span class="lbl">출퇴근 흐름</span></button>
+    <button class="nav-item" data-view="data"><span class="ico">▤</span><span class="lbl">데이터 · 방법</span></button>
+    <div class="nav-spacer"></div>
+    <div class="nav-foot">
+      <a class="nav-ext" href="https://github.com/buzziru/guro_stream" target="_blank" rel="noopener"><span class="ico">↗</span><span>GitHub 저장소</span></a>
+    </div>
+  </aside>
 
-  <!-- 1. 이용인원 지도 -->
-  <div class="section">
-    <div class="section-head">
-      <h2 class="section-title">역별 지하철 이용인원</h2>
-      <p class="section-note">원의 크기는 역별 총 이용인원. 도심·강남·2호선 라인에 이용량이 집중됩니다.</p>
-    </div>
-    <div class="panel">
-      <div class="tabs" data-group="ride">
-        <button class="tab active" data-target="map-ride-1">역별 이용인원</button>
-        <button class="tab" data-target="map-ride-2">이용인원 · 주민등록인구</button>
+  <!-- ── main ── -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="t-title">개요</h1>
+        <p id="t-sub">지하철·기후·인구·버스 통합 데이터로 본 서울 통근 흐름</p>
       </div>
-      <div class="map-wrap"><iframe id="map-ride-1" data-src="maps/ridership_total.html" title="역별 이용인원 지도" loading="lazy"></iframe></div>
-      <div class="map-wrap" hidden><iframe id="map-ride-2" data-src="maps/ridership_pop.html" title="이용인원과 인구 지도" loading="lazy"></iframe></div>
-      <p class="map-cap mono">folium · Leaflet · 서울 열린데이터 역별 이용인원</p>
+      <div class="meta">분석 데이터 <b>350만 행 · 50 변수</b><br>1–8호선 · 2022–2023</div>
     </div>
-  </div>
 
-  <!-- 2. 출퇴근 순승하차 지도 -->
-  <div class="section">
-    <div class="section-head">
-      <h2 class="section-title">출퇴근 순승하차 흐름</h2>
-      <p class="section-note">순승하차 = 승차 − 하차. 아침엔 주거지에서 빠져나가(파랑) 업무지구로 모여들고(빨강), 저녁엔 정반대로 흐릅니다.</p>
-    </div>
-    <div class="panel">
-      <div class="tabs" data-group="diff">
-        <button class="tab active" data-target="map-diff-1">출근 08–09시</button>
-        <button class="tab" data-target="map-diff-2">퇴근 18–19시</button>
+    <!-- overview -->
+    <section class="view active" id="view-overview">
+      <div class="kpis">
+        <div class="kpi"><p class="k">분석 데이터셋</p><div class="v">350<small>만 행</small></div><div class="bar"><i style="width:100%"></i></div></div>
+        <div class="kpi"><p class="k">통합 변수</p><div class="v">50<small>개</small></div><div class="bar"><i style="width:80%"></i></div></div>
+        <div class="kpi"><p class="k">대상 노선</p><div class="v">1–8<small>호선</small></div><div class="bar"><i style="width:64%"></i></div></div>
+        <div class="kpi"><p class="k">최대 유입 업무지구</p><div class="v" style="font-size:16px">가산디지털단지</div><div class="bar"><i style="width:100%"></i></div></div>
       </div>
-      <div class="map-wrap"><iframe id="map-diff-1" data-src="maps/diff_morning.html" title="출근 시간 순승하차 지도" loading="lazy"></iframe></div>
-      <div class="map-wrap" hidden><iframe id="map-diff-2" data-src="maps/diff_evening.html" title="퇴근 시간 순승하차 지도" loading="lazy"></iframe></div>
-      <p class="map-cap mono">folium · 월요일 기준 시간대별 순승하차 차이</p>
-    </div>
-  </div>
-
-  <!-- 3. 구로디지털단지역 시간대별 -->
-  <div class="section">
-    <div class="section-head">
-      <h2 class="section-title">구로디지털단지역 시간대별 순승하차</h2>
-      <p class="section-note">프로젝트 본거지 역. 아침(08–09시) 하차가 몰리고 저녁(18–19시) 승차가 몰리는 전형적 업무지구 통근 패턴.</p>
-    </div>
-    <div class="panel">
-      <div class="legend">
-        <span><i style="background:var(--accent)"></i>순하차 우세 — 모여듦(유입)</span>
-        <span><i style="background:var(--good)"></i>순승차 우세 — 빠져나감(유출)</span>
-      </div>
-      <div class="col-chart" id="guji-chart"></div>
-      <div class="col-zero"></div>
-      <div class="col-axis" id="guji-axis"></div>
-    </div>
-  </div>
-
-  <!-- 4. 출근 순승하차 상위 -->
-  <div class="section">
-    <div class="section-head">
-      <h2 class="section-title">출근(08–09시) 순승하차 상위 역</h2>
-      <p class="section-note">아침에 사람이 가장 많이 모여드는 업무지구와, 가장 많이 빠져나가는 주거지 Top 5.</p>
-    </div>
-    <div class="panel">
-      <div class="rank-grid">
-        <div>
-          <p class="rank-label" style="color:var(--accent-light)">▼ 순하차 상위 — 업무지구 (모여듦)</p>
-          <div id="rank-in"></div>
+      <div class="ov-grid">
+        <div class="card">
+          <div class="card-h">
+            <h3>구로디지털단지역 시간대별 순승하차</h3>
+          </div>
+          <div class="legend" style="margin-bottom:10px;">
+            <span><i style="background:var(--accent)"></i>순하차 — 모여듦(유입)</span>
+            <span><i style="background:var(--good)"></i>순승차 — 빠져나감(유출)</span>
+          </div>
+          <div class="col-chart" id="guji-chart"></div>
+          <div class="col-zero"></div>
+          <div class="col-axis" id="guji-axis"></div>
+          <p class="card-h note" style="margin:10px 0 0;display:block">아침(08–09시) 하차가 몰리고 저녁(18–19시) 승차가 몰리는 전형적 업무지구 통근 패턴.</p>
         </div>
-        <div>
-          <p class="rank-label" style="color:var(--good)">▲ 순승차 상위 — 주거지 (빠져나감)</p>
-          <div id="rank-out"></div>
+        <div class="card">
+          <div class="card-h">
+            <h3>출근 08–09시 순승하차 상위</h3>
+          </div>
+          <div class="tabs" data-group="rank" style="margin-bottom:13px;">
+            <button class="tab active" data-rank="in">업무지구 유입</button>
+            <button class="tab" data-rank="out">주거지 유출</button>
+          </div>
+          <div id="rank-body"></div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <p class="foot">
-    <b>데이터</b> 서울 열린데이터광장 · 공공데이터포털 — 지하철 역별·시간대별 이용인원, 기후, 주민등록인구, 버스 · <b>규모</b> 350만 행 · 50개 변수<br />
-    <b>처리</b> Python · pandas · MariaDB 중간 저장 · 지도 시각화 folium/Leaflet · 모델 scikit-learn / LightGBM (회귀 5종 비교)
-  </p>
+    <!-- ridership map -->
+    <section class="view" id="view-ridership">
+      <div class="map-view">
+        <div class="tabs" data-group="ride">
+          <button class="tab active" data-target="map-ride-1">역별 이용인원</button>
+          <button class="tab" data-target="map-ride-2">이용인원 · 주민등록인구</button>
+        </div>
+        <div class="map-frame"><iframe id="map-ride-1" data-src="maps/ridership_total.html" title="역별 이용인원 지도"></iframe></div>
+        <div class="map-frame" hidden><iframe id="map-ride-2" data-src="maps/ridership_pop.html" title="이용인원·인구 지도"></iframe></div>
+        <p class="map-cap mono">folium · Leaflet · 원의 크기 = 역별 총 이용인원 · 도심·강남·2호선에 집중</p>
+      </div>
+    </section>
+
+    <!-- commute map -->
+    <section class="view" id="view-commute">
+      <div class="map-view">
+        <div class="tabs" data-group="diff">
+          <button class="tab active" data-target="map-diff-1">출근 08–09시</button>
+          <button class="tab" data-target="map-diff-2">퇴근 18–19시</button>
+        </div>
+        <div class="map-frame"><iframe id="map-diff-1" data-src="maps/diff_morning.html" title="출근 순승하차 지도"></iframe></div>
+        <div class="map-frame" hidden><iframe id="map-diff-2" data-src="maps/diff_evening.html" title="퇴근 순승하차 지도"></iframe></div>
+        <p class="map-cap mono">folium · 순승하차 = 승차 − 하차 · 빨강=하차 우세(모여듦) · 파랑=승차 우세(빠져나감)</p>
+      </div>
+    </section>
+
+    <!-- data / methods -->
+    <section class="view" id="view-data">
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-h"><h3>수집·통합 데이터</h3><span class="note">공공데이터 직접 수집 · 복합 키 조인</span></div>
+        <table class="dtable">
+          <thead><tr><th>영역</th><th>출처</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><td><b>지하철</b></td><td>서울 열린데이터광장</td><td>역별·시간대별 승하차 인원</td></tr>
+            <tr><td><b>기후</b></td><td>공공데이터포털</td><td>기온·강수량·습도 (폭염/한파 파생)</td></tr>
+            <tr><td><b>인구</b></td><td>행정안전부</td><td>동별 주민등록인구</td></tr>
+            <tr><td><b>버스</b></td><td>서울 열린데이터광장</td><td>노선·정류장 (환승 패턴 피처)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>처리 · 모델링 스택</h3></div>
+        <p style="font-size:12.5px;color:var(--fg-2);margin:0;line-height:1.7;">
+          역·시간대 복합 키로 4개 영역을 조인해 350만 행·50변수 데이터셋 구축. pandas 한계 구간은 MariaDB 중간 저장으로 처리. 지도 시각화는 folium/Leaflet, 예측은 회귀 5종(Linear·Ridge·RandomForest·XGBoost·LightGBM)을 교차검증 비교 — LightGBM 최우수.
+        </p>
+        <div class="stack">
+          <span>Python</span><span>pandas</span><span>MariaDB</span><span>scikit-learn</span><span>LightGBM</span><span>folium</span>
+        </div>
+        <p style="font-size:11px;color:var(--tertiary);margin:14px 0 0;">원본 Streamlit 앱: gurostream-process.streamlit.app · 이 대시보드는 핵심 인사이트만 큐레이션한 정적 재구성본입니다.</p>
+      </div>
+    </section>
+  </div>
 </div>
 
 <script type="module">
 const $ = (id) => document.getElementById(id);
 const won = (n) => (Math.abs(n) >= 10000 ? (n/10000).toFixed(0)+'만' : n.toLocaleString());
 
-// ── 탭 전환 + 지도 lazy load ──
-function activateMap(iframe){
-  if(iframe && !iframe.src && iframe.dataset.src){ iframe.src = iframe.dataset.src; }
+// ── view (sidebar) switching ──
+const VIEW_META = {
+  overview:  ['개요','지하철·기후·인구·버스 통합 데이터로 본 서울 통근 흐름'],
+  ridership: ['이용인원 지도','역별 지하철 총 이용인원 분포'],
+  commute:   ['출퇴근 흐름','시간대별 순승하차(승차−하차) — 아침·저녁 반전'],
+  data:      ['데이터 · 방법','수집·통합한 공공데이터와 처리·모델링 스택'],
+};
+function activateMap(fr){ if(fr && !fr.src && fr.dataset.src) fr.src = fr.dataset.src; }
+function showView(name){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active', v.id==='view-'+name));
+  $('t-title').textContent = VIEW_META[name][0];
+  $('t-sub').textContent = VIEW_META[name][1];
+  // lazy-load the active map(s) in the shown view
+  document.querySelectorAll('#view-'+name+' .map-frame:not([hidden]) iframe').forEach(activateMap);
 }
-document.querySelectorAll('.tabs').forEach(group=>{
+document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+
+// ── map tab switching (within a view) ──
+document.querySelectorAll('.tabs[data-group="ride"],.tabs[data-group="diff"]').forEach(group=>{
   group.querySelectorAll('.tab').forEach(tab=>{
-    tab.addEventListener('click', ()=>{
-      group.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      const target = $(tab.dataset.target);
-      // 같은 그룹의 모든 map-wrap 토글
+    tab.addEventListener('click',()=>{
       group.querySelectorAll('.tab').forEach(t=>{
-        const fr = $(t.dataset.target);
-        if(fr) fr.closest('.map-wrap').hidden = (t !== tab);
+        t.classList.toggle('active', t===tab);
+        const fr=$(t.dataset.target); if(fr) fr.closest('.map-frame').hidden=(t!==tab);
       });
-      activateMap(target);
-      postHeight();
+      activateMap($(tab.dataset.target));
     });
   });
 });
-// 기본 활성 탭의 지도 즉시 로드
-document.querySelectorAll('.tabs').forEach(group=>{
-  const active = group.querySelector('.tab.active');
-  if(active) activateMap($(active.dataset.target));
-});
 
-// ── 구디역 시간대별 다이버징 컬럼 ──
-const HOURS = ['06전','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24후'];
-const GUJI = [381767,384529,658870,-648930,-375597,96339,193838,216925,94055,28916,-17919,-18546,312566,655699,-353059,-223177,-344052,-457609,-365151,-111735];
-const gMax = Math.max(...GUJI.map(Math.abs));
-const peaks = new Set([3,13]); // 08-09 하차 / 18-19 승차
-$('guji-chart').innerHTML = GUJI.map((v,i)=>{
-  const h = (Math.abs(v)/gMax*100).toFixed(1);
-  const up = v >= 0 ? `<div class="bar" style="height:${h}%"></div>` : '';
-  const dn = v < 0 ? `<div class="bar" style="height:${h}%"></div>` : '';
-  const cls = peaks.has(i) ? 'col peak' : 'col';
-  return `<div class="${cls}" title="${HOURS[i]}시 · 순승하차 ${won(v)}"><div class="up">${up}</div><div class="down">${dn}</div></div>`;
+// ── 구디역 다이버징 컬럼 ──
+const HOURS=['06전','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24후'];
+const GUJI=[381767,384529,658870,-648930,-375597,96339,193838,216925,94055,28916,-17919,-18546,312566,655699,-353059,-223177,-344052,-457609,-365151,-111735];
+const gMax=Math.max(...GUJI.map(Math.abs));
+const peaks=new Set([3,13]);
+$('guji-chart').innerHTML=GUJI.map((v,i)=>{
+  const h=(Math.abs(v)/gMax*100).toFixed(1);
+  const up=v>=0?`<div class="bar" style="height:${h}%"></div>`:'';
+  const dn=v<0?`<div class="bar" style="height:${h}%"></div>`:'';
+  return `<div class="${peaks.has(i)?'col peak':'col'}" title="${HOURS[i]}시 · 순승하차 ${won(v)}"><div class="up">${up}</div><div class="down">${dn}</div></div>`;
 }).join('');
-$('guji-axis').innerHTML = HOURS.map((h,i)=>`<span>${(i%2===0)?h:''}</span>`).join('');
+$('guji-axis').innerHTML=HOURS.map((h,i)=>`<span>${i%2===0?h:''}</span>`).join('');
 
-// ── 출근 08-09시 순승하차 상위 ──
-// 순하차(업무지구·유입) — 08-09시 음수 큰 역
-const IN = [
-  ['가산디지털단지','7호선',-4162646],
-  ['역삼','2호선',-3954982],
-  ['삼성(무역센터)','2호선',-3755681],
-  ['을지로입구','2호선',-3632664],
-  ['선릉','2호선',-2972679],
-];
-// 순승차(주거지·유출) — 08-09시 양수 큰 역
-const OUT = [
-  ['신림','2호선',2796628],
-  ['까치산','5호선',1616986],
-  ['화곡','5호선',1392124],
-  ['서울대입구(관악구청)','2호선',1324635],
-  ['연신내','3호선',1314197],
-];
-function renderRank(elId, rows, color){
-  const max = Math.max(...rows.map(r=>Math.abs(r[2])));
-  $(elId).innerHTML = rows.map((r,i)=>{
-    const w = (Math.abs(r[2])/max*100).toFixed(1);
-    return `<div class="rb ${i===0?'hi':''}">
-      <div class="rb-head">
-        <span class="rb-name">${r[0]}<span class="line">${r[1]}</span></span>
-        <span class="rb-val mono">${won(r[2])}</span>
-      </div>
-      <div class="rb-track"><div class="rb-fill" style="width:${w}%;background:${color}"></div></div>
-    </div>`;
+// ── 출근 순승하차 상위 (탭형) ──
+const RANK={
+  in:{color:'var(--accent)', rows:[
+    ['가산디지털단지','7호선',-4162646],['역삼','2호선',-3954982],['삼성(무역센터)','2호선',-3755681],
+    ['을지로입구','2호선',-3632664],['선릉','2호선',-2972679]]},
+  out:{color:'var(--good)', rows:[
+    ['신림','2호선',2796628],['까치산','5호선',1616986],['화곡','5호선',1392124],
+    ['서울대입구(관악구청)','2호선',1324635],['연신내','3호선',1314197]]},
+};
+function renderRank(key){
+  const {color,rows}=RANK[key];
+  const max=Math.max(...rows.map(r=>Math.abs(r[2])));
+  $('rank-body').innerHTML=rows.map((r,i)=>{
+    const w=(Math.abs(r[2])/max*100).toFixed(1);
+    return `<div class="rb ${i===0?'hi':''}"><div class="rb-head">
+      <span class="rb-name">${r[0]}<span class="line">${r[1]}</span></span>
+      <span class="rb-val mono">${won(r[2])}</span></div>
+      <div class="rb-track"><div class="rb-fill" style="width:${w}%;background:${color}"></div></div></div>`;
   }).join('');
 }
-renderRank('rank-in', IN, 'var(--accent)');
-renderRank('rank-out', OUT, 'var(--good)');
+document.querySelectorAll('.tabs[data-group="rank"] .tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tabs[data-group="rank"] .tab').forEach(t=>t.classList.toggle('active',t===tab));
+    renderRank(tab.dataset.rank);
+  });
+});
+renderRank('in');
 
-// ── iframe 높이 동기화 (부모 포트폴리오가 수신) ──
-let lastH = 0;
+// ── 고정 높이 동기화 (부모 포트폴리오가 수신) ──
+function appHeight(){ return window.innerWidth < 560 ? 720 : 620; }
+let lastH=0;
 function postHeight(){
-  const h = document.documentElement.scrollHeight;
-  if(h !== lastH){ lastH = h; parent.postMessage({ type:'subway-demo-height', height:h }, '*'); }
+  const h=appHeight();
+  document.documentElement.style.setProperty('--app-h', h+'px');
+  if(h!==lastH){ lastH=h; parent.postMessage({type:'subway-demo-height',height:h},'*'); }
 }
-window.addEventListener('load', postHeight);
-window.addEventListener('resize', postHeight);
-new ResizeObserver(postHeight).observe(document.body);
+window.addEventListener('load',postHeight);
+window.addEventListener('resize',postHeight);
 postHeight();
+
+// 기본 뷰의 지도는 진입 시 로드(개요는 지도 없음)
 </script>
 </body>
 </html>
