@@ -1,3 +1,91 @@
-# guro_stream
+# 서울 지하철 이용인원 예측 (Seoul Subway Ridership Forecasting)
 
-**Seoul Subway Passenger Traffic Forecasting Project** : [steamlit](https://gurostream-process.streamlit.app/)
+서울 지하철 역별·시간대별 이용인원을 예측하기 위해, **지하철·기상·인구·버스 4개 영역의 공공데이터를 직접 수집·통합**하고 출퇴근 통근 흐름을 분석·시각화한 데이터 분석 프로젝트입니다. 분석 결과는 인터랙티브 대시보드로 제공합니다.
+
+> **인터랙티브 대시보드**: [ingyoun-seoul-subway-demo.static.hf.space](https://ingyoun-seoul-subway-demo.static.hf.space) — 핵심 인사이트 큐레이션 (정적)
+> **전처리/EDA 대시보드**: [gurostream-process.streamlit.app](https://gurostream-process.streamlit.app/) — 수집·전처리 전 과정 (Streamlit)
+
+---
+
+## 📌 프로젝트 개요
+
+| 항목 | 내용 |
+| --- | --- |
+| **목표** | 역별·시간대별 지하철 이용인원 예측 — 흩어진 공공데이터를 분석 단위로 통합 |
+| **대상** | 서울 지하철 1–8호선 · 2022–2023 |
+| **데이터** | 4개 영역 공공데이터 직접 수집 · 약 350만 행 · 50개 변수 |
+| **핵심 기술** | Python · pandas · folium/Leaflet · scikit-learn · LightGBM · Streamlit |
+| **결과물** | 통합 분석 데이터셋 · 지도/차트 시각화 · 인터랙티브 대시보드 2종 |
+
+핵심 과제는 예측 모델 자체보다 **데이터 수집과 통합**이었습니다. 역·시간대를 복합 키로 4개 영역을 조인하고, 결측 처리와 파생 피처(요일·공휴일·폭염/한파)를 생성해 분석 가능한 형태로 만드는 전 과정을 다뤘습니다.
+
+---
+
+## 📊 데이터
+
+| 영역 | 출처 | 내용 |
+| --- | --- | --- |
+| **지하철** | 서울 열린데이터광장 | 역별·일별·시간대별 승하차 인원, 유·무임 승하차 |
+| **기상** | 공공데이터포털 | 기온·강수량·습도 (시간당 강수량·폭염/한파 파생) |
+| **인구** | 행정안전부 | 동별 주민등록인구 |
+| **버스** | 서울 열린데이터광장 | 노선·정류장 (환승 패턴 피처) |
+| **경계** | 통계청 / 행정동 GeoJSON | 시도·행정동 경계 (지도 시각화용) |
+
+전처리 산출물은 `data/전처리/`, 원본은 `data/` 하위 영역별 폴더에 정리되어 있습니다.
+
+---
+
+## 🔎 주요 인사이트
+
+- **순승하차(승차 − 하차)** 로 통근 흐름을 정의 — 양수는 빠져나감(유출), 음수는 모여듦(유입).
+- **구로디지털단지역**: 아침(08–09시) 하차가 몰리고 저녁(18–19시) 승차가 몰리는 **전형적 업무지구 통근 패턴**.
+- **출근(08–09시) 순하차 상위**: 가산디지털단지·역삼·삼성·을지로입구·선릉 — 업무지구로 사람이 모여듦.
+- **출근 순승차 상위**: 신림·까치산·화곡·서울대입구·연신내 — 주거지에서 빠져나감.
+- 아침과 저녁의 흐름은 지도상에서 정확히 **반전**됩니다.
+
+---
+
+## 🖥 대시보드
+
+### 정적 인사이트 대시보드 (`static-demo/`)
+사이드바로 뷰를 전환하는 단일 화면 대시보드. folium 지도(이용인원·출퇴근 차이)와 실측 집계 차트(구디역 시간대별, 출근 순승하차 상위)를 큐레이션했습니다. Hugging Face Static Space로 배포되며 포트폴리오에 임베드됩니다. ([static-demo/README.md](static-demo/README.md))
+
+### Streamlit 앱 (`app.py`)
+수집·전처리 전 과정을 보여주는 EDA 대시보드. 5개 메뉴로 구성됩니다.
+1. 지하철 데이터 전처리 — 원본 → 휴무일/승하차 차이 가공
+2. 지하철 이용인원 — 역별 이용인원·인구 지도
+3. 출퇴근 시간 승하차 — 출근/퇴근 순승하차 지도 + 차트
+4. 붐비는 시간 — 평일/휴무일 혼잡 시간대, 유·무임 승하차
+5. 기상 데이터 전처리 — 강수량 분류·폭염/한파 파생
+
+---
+
+## 📁 저장소 구조
+
+```
+guro_stream/
+├── app.py                # Streamlit EDA 대시보드
+├── static-demo/          # 정적 인사이트 대시보드 (HF Static Space)
+├── data/                 # 원본·전처리 데이터 (지하철 / 기상 / 전처리 …)
+├── map_visual/           # folium 지도 산출물 (HTML)
+├── 그래프/                # 분석 그래프 (PNG)
+├── malgun.ttf            # 한글 폰트 (matplotlib)
+└── requirements.txt
+```
+
+---
+
+## ⚙️ 실행 방법
+
+```bash
+pip install streamlit pandas altair plotly seaborn Pillow xlrd
+streamlit run app.py
+```
+
+`data/`·`map_visual/` 의 파일 경로를 사용하므로 저장소 루트에서 실행하세요.
+
+---
+
+## 🛠 기술 스택
+
+`Python` · `pandas` · `folium` / `Leaflet` · `altair` · `plotly` · `seaborn` · `scikit-learn` · `LightGBM` · `Streamlit`
