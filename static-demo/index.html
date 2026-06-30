@@ -16,10 +16,9 @@
     --fg:#f7f8f8; --fg-2:#d0d6e0; --muted:#8a8f98; --tertiary:#62666d;
     --accent:#5e6ad2; --accent-light:#828fff;
     --good:#4cc38a;
-    --app-h:700px;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--bg);height:100%;}
+  html,body{margin:0;padding:0;background:var(--bg);}
   body{
     font-family:'Pretendard',system-ui,-apple-system,sans-serif;
     color:var(--fg);-webkit-font-smoothing:antialiased;
@@ -28,7 +27,7 @@
   .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
 
   /* ── app shell ── */
-  .app{display:flex;height:var(--app-h);background:var(--bg);overflow:hidden;}
+  .app{display:flex;background:var(--bg);}
 
   /* sidebar */
   .side{
@@ -79,10 +78,8 @@
   .topbar .meta{font-size:11px;color:var(--tertiary);text-align:right;white-space:nowrap;}
   .topbar .meta b{color:var(--fg-2);font-weight:500;}
 
-  .view{flex:1;min-height:0;padding:18px 22px;overflow:auto;display:none;}
+  .view{padding:18px 22px;display:none;}
   .view.active{display:block;}
-  .view::-webkit-scrollbar{width:8px;height:8px;}
-  .view::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:8px;}
 
   .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 16px;}
   .card-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px;}
@@ -149,8 +146,8 @@
   .rb.hi .rb-name{color:var(--fg);font-weight:500;}
 
   /* map view */
-  .map-view{height:100%;display:flex;flex-direction:column;gap:12px;}
-  .map-frame{flex:1;min-height:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--deep);}
+  .map-view{display:flex;flex-direction:column;gap:12px;}
+  .map-frame{height:560px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--deep);}
   .map-frame iframe{display:block;width:100%;height:100%;border:0;background:#fff;}
   .map-cap{font-size:11px;color:var(--tertiary);margin:0;flex:none;}
 
@@ -360,22 +357,17 @@ document.querySelectorAll('.tabs[data-group="rank"] .tab').forEach(tab=>{
 });
 renderRank('in');
 
-// ── 높이 동기화 (뷰별 정확한 높이를 부모 포트폴리오에 전달) ──
-// 개요: 콘텐츠에 꼭 맞춰 내부 스크롤 없이 한 화면. 지도: 지도가 채울 고정 높이.
-function curHeight(){
-  const top=document.querySelector('.topbar').offsetHeight;
-  const active=document.querySelector('.view.active');
-  if(active && active.id==='view-overview') return top + active.scrollHeight + 10;
-  return window.innerWidth < 560 ? 560 : 620;
-}
+// ── 높이 동기화 ──
+// .app 높이는 콘텐츠로 결정(고정 X) → 부모가 iframe 높이를 바꿔도 측정값이
+// 변하지 않아 피드백 루프가 없다. 뷰 전환/지도 로드 시 ResizeObserver가 재전송.
+const appEl=document.querySelector('.app');
 let lastH=0;
 function syncHeight(){
-  const h=Math.round(curHeight());
-  document.documentElement.style.setProperty('--app-h', h+'px');
-  if(h!==lastH){ lastH=h; parent.postMessage({type:'subway-demo-height',height:h},'*'); }
+  const h=appEl.offsetHeight;
+  if(h && h!==lastH){ lastH=h; parent.postMessage({type:'subway-demo-height',height:h},'*'); }
 }
 window.addEventListener('load',syncHeight);
-window.addEventListener('resize',syncHeight);
+new ResizeObserver(syncHeight).observe(appEl);
 syncHeight();
 </script>
 </body>
