@@ -1,4 +1,4 @@
-# 서울 지하철 이용인원 예측 (Seoul Subway Ridership Forecasting)
+# 서울 지하철 이용인원 예측
 
 > *시간대별·역별로 바뀌는 지하철 이용 퍼즐 풀기*
 
