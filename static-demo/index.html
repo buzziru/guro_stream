@@ -7,158 +7,160 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-<link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.18/index.min.css" />
+
 <style>
   :root{
-    --bg:#010102; --surface:#0f1011; --elevated:#141516; --deep:#18191a;
-    --border:#23252a; --border-mid:#34343a;
-    --fg:#f7f8f8; --fg-2:#d0d6e0; --muted:#8a8f98; --tertiary:#62666d;
-    --accent:#5e6ad2; --accent-light:#828fff;
-    --good:#4cc38a;
+    --paper:#F9FAF8; --panel:#E7E9E4; --accent-wash:#DDEAF4;
+    --ink:#1C2124; --ink-2:#41484C; --ink-3:#5A6266;
+    --accent:#1F77B4; --accent-text:#175F96;
+    --mark-base:#757C81; --rule:#C5CAC6;
+    --font-sans:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --font-code:ui-monospace,'Cascadia Mono',Consolas,monospace;
+    color-scheme:light;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--bg);}
+  html,body{margin:0;padding:0;background:var(--paper);}
   body{
-    font-family:'Pretendard',system-ui,-apple-system,sans-serif;
-    color:var(--fg);-webkit-font-smoothing:antialiased;
-    line-height:1.55;letter-spacing:-0.01em;word-break:keep-all;
+    font-family:var(--font-sans);color:var(--ink-2);
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    line-height:1.55;word-break:keep-all;
   }
-  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
-
+  ::selection{background:var(--accent-wash);}
+  :focus{outline:none;}
+  :focus-visible{outline:2px solid var(--accent-text);outline-offset:2px;border-radius:2px;}
+  a{color:var(--accent-text);text-underline-offset:2px;transition:color .15s ease-out;}
+  a:hover{color:var(--ink);}
+  .mono{font-family:var(--font-code);}
+  .num{font-variant-numeric:tabular-nums;}
+  button{font-family:inherit;}
+  /* 데모 공통: 탭(선택 상태는 파랑 밑줄) */
+  @media (prefers-reduced-motion:reduce){*{transition-duration:0s !important;}}
   /* ── app shell ── */
-  .app{display:flex;background:var(--bg);}
+  .app{display:flex;background:var(--paper);}
 
-  /* sidebar */
-  .side{
-    width:212px;flex:none;display:flex;flex-direction:column;
-    background:var(--surface);border-right:1px solid var(--border);
-    padding:18px 14px;gap:6px;
-  }
-  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 16px;}
-  .brand-mark{
-    width:30px;height:30px;border-radius:8px;flex:none;
-    background:linear-gradient(135deg,var(--accent),#3a44a0);
-    display:flex;align-items:center;justify-content:center;font-size:16px;
-  }
-  .brand-txt b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-0.02em;line-height:1.2;}
-  .brand-txt span{font-size:10.5px;color:var(--tertiary);}
+  /* sidebar: 면 없이 공백으로 나눈다 */
+  .side{width:212px;flex:none;display:flex;flex-direction:column;padding:20px 14px 18px 22px;gap:4px;}
+  .brand{padding:2px 0 18px;}
+  .brand-txt b{display:block;font-size:15px;font-weight:650;color:var(--ink);line-height:1.3;}
+  .brand-txt span{font-size:13px;color:var(--ink-3);}
 
-  .nav-label{font-size:10px;letter-spacing:.14em;color:var(--tertiary);text-transform:uppercase;margin:6px 8px 4px;}
+  .nav-label{font-size:13px;color:var(--ink-3);margin:4px 0 4px;}
   .nav-item{
-    display:flex;align-items:center;gap:11px;width:100%;
-    padding:9px 11px;border-radius:8px;cursor:pointer;
-    background:none;border:1px solid transparent;
-    color:var(--muted);font-size:13px;font-family:inherit;text-align:left;
-    transition:background .14s,color .14s;position:relative;
+    display:flex;align-items:center;gap:10px;width:100%;
+    padding:8px 0 8px 12px;cursor:pointer;background:none;border:0;
+    color:var(--ink-2);font-size:15px;text-align:start;position:relative;
+    transition:color .15s ease-out;
   }
-  .nav-item .ico{width:17px;text-align:center;font-size:14px;flex:none;}
-  .nav-item:hover{background:var(--elevated);color:var(--fg-2);}
-  .nav-item.active{background:var(--elevated);color:var(--fg);border-color:var(--border);}
-  .nav-item.active::before{
-    content:"";position:absolute;left:-14px;top:50%;transform:translateY(-50%);
-    width:3px;height:18px;border-radius:0 3px 3px 0;background:var(--accent);
-  }
+  .nav-item .ico{width:17px;text-align:center;font-size:14px;flex:none;color:var(--ink-3);}
+  .nav-item:hover{color:var(--ink);}
+  .nav-item.active{color:var(--ink);font-weight:600;}
+  .nav-item.active::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:2px;background:var(--accent);}
+  .nav-item.active .ico{color:var(--ink);}
   .nav-spacer{flex:1;}
-  .nav-foot{border-top:1px solid var(--border);padding-top:10px;margin-top:4px;}
-  .nav-ext{
-    display:flex;align-items:center;gap:11px;padding:8px 11px;border-radius:8px;
-    color:var(--tertiary);font-size:12px;text-decoration:none;transition:color .14s,background .14s;
-  }
-  .nav-ext:hover{color:var(--fg-2);background:var(--elevated);}
+  .nav-foot{padding-top:10px;}
+  .nav-ext{display:inline-block;padding:6px 0 6px 12px;color:var(--accent-text);font-size:14px;}
+  .nav-ext:hover{color:var(--ink);}
 
   /* main */
   .main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;}
   .topbar{
-    display:flex;align-items:center;justify-content:space-between;gap:16px;
-    padding:18px 22px;border-bottom:1px solid var(--border);flex:none;
+    display:flex;align-items:flex-start;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;
+    padding:20px 22px 16px;border-bottom:1px solid var(--rule);flex:none;
   }
-  .topbar h1{font-size:18px;font-weight:600;letter-spacing:-0.03em;margin:0;}
-  .topbar p{font-size:12.5px;color:var(--muted);margin:3px 0 0;}
-  .topbar .meta{font-size:11px;color:var(--tertiary);text-align:right;white-space:nowrap;}
-  .topbar .meta b{color:var(--fg-2);font-weight:500;}
+  .topbar h1{font-size:20px;font-weight:650;color:var(--ink);margin:0;line-height:1.35;}
+  .topbar p{font-size:15px;color:var(--ink-2);margin:4px 0 0;}
+  .topbar .meta{display:grid;grid-template-columns:auto auto;gap:2px 12px;margin:2px 0 0;font-size:14px;}
+  .topbar .meta dt{color:var(--ink-3);font-weight:400;}
+  .topbar .meta dd{margin:0;color:var(--ink);font-variant-numeric:tabular-nums;}
 
-  .view{padding:18px 22px;display:none;}
+  .view{padding:20px 22px 24px;display:none;}
   .view.active{display:block;}
 
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 16px;}
-  .card-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px;}
-  .card-h h3{font-size:13.5px;font-weight:600;letter-spacing:-0.02em;margin:0;}
-  .card-h .note{font-size:11px;color:var(--tertiary);}
+  .card-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .card-h h3{font-size:15px;font-weight:650;color:var(--ink);margin:0;}
+  .card-h .note{font-size:13px;color:var(--ink-3);}
+  .chart-note{font-size:14px;color:var(--ink-3);margin:12px 0 0;}
 
   /* KPI row */
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
-  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 14px;}
-  .kpi .k{font-size:10.5px;letter-spacing:.06em;color:var(--tertiary);text-transform:uppercase;margin:0 0 7px;}
-  .kpi .v{font-size:22px;font-weight:600;letter-spacing:-0.03em;line-height:1;}
-  .kpi .v small{font-size:12px;font-weight:400;color:var(--muted);margin-left:4px;letter-spacing:0;}
-  .kpi .bar{height:4px;border-radius:9999px;background:var(--deep);margin-top:11px;overflow:hidden;}
-  .kpi .bar i{display:block;height:100%;border-radius:9999px;background:var(--accent);}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:28px;}
+  .kpi .k{font-size:14px;color:var(--ink-3);margin:0 0 6px;}
+  .kpi .v{font-size:22px;font-weight:650;color:var(--ink);line-height:1.15;font-variant-numeric:tabular-nums;}
+  .kpi .v small{font-size:14px;font-weight:400;color:var(--ink-2);margin-left:3px;}
 
   /* overview lower grid */
-  .ov-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;}
+  .ov-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:36px;}
   .ov-grid.even{grid-template-columns:1fr 1fr;}
-  @media(max-width:760px){.ov-grid,.ov-grid.even{grid-template-columns:1fr;}.kpis{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:760px){.ov-grid,.ov-grid.even{grid-template-columns:1fr;gap:28px;}.kpis{grid-template-columns:repeat(2,1fr);}}
 
   /* overview integrated data/methods */
   .steps,.srclist{list-style:none;margin:0;padding:0;}
-  .steps li{position:relative;padding:5px 0 5px 15px;font-size:12.5px;color:var(--fg-2);line-height:1.5;}
-  .steps li::before{content:"";position:absolute;left:1px;top:11px;width:5px;height:5px;border-radius:50%;background:var(--accent);}
-  .srclist li{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
-  .srclist li:last-child{border-bottom:0;}
-  .srclist li b{color:var(--fg);font-weight:600;min-width:40px;flex:none;}
-  .srclist li span{color:var(--muted);}
+  .steps li{position:relative;padding:4px 0 4px 15px;font-size:15px;color:var(--ink-2);line-height:1.6;}
+  .steps li::before{content:"";position:absolute;left:1px;top:13px;width:5px;height:5px;border-radius:50%;background:var(--mark-base);}
+  .srclist{border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);}
+  .srclist li{display:flex;gap:10px;padding:8px 0;font-size:15px;}
+  .srclist li + li{border-top:1px solid var(--rule);}
+  .srclist li b{color:var(--ink);font-weight:600;min-width:44px;flex:none;}
+  .srclist li span{color:var(--ink-2);}
 
-  /* diverging column chart */
-  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);}
-  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
-  .col-chart{display:flex;gap:3px;height:188px;align-items:stretch;padding:0 2px;}
-  .col{flex:1;display:flex;flex-direction:column;min-width:0;}
-  .col .up,.col .down{flex:1;display:flex;}
-  .col .up{align-items:flex-end;}
-  .col .down{align-items:flex-start;}
-  .col .bar{width:64%;margin:0 auto;border-radius:3px;transition:height .5s cubic-bezier(.2,.7,.3,1);}
-  .col .up .bar{background:var(--good);}
+  /* diverging column chart: 하차 우세(유입) 파랑, 승차 우세(유출) 회색 */
+  .legend{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:13px;color:var(--ink-3);}
+  .legend i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;}
+  .chart{position:relative;}
+  .dir{position:absolute;left:0;font-size:13px;color:var(--ink-3);background:var(--paper);padding-right:4px;z-index:1;}
+  .dir.up{top:0;}
+  .dir.down{bottom:30px;left:auto;right:0;padding:0 0 0 4px;}
+  .col-chart{display:flex;gap:3px;height:220px;align-items:stretch;padding:0 2px;}
+  .col{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;}
+  .col .up,.col .down{flex:1;display:flex;flex-direction:column;}
+  .col .up{justify-content:flex-end;}
+  .col .down{justify-content:flex-start;}
+  .col .bar{width:64%;margin:0 auto;flex:none;}
+  .col .up .bar{background:var(--mark-base);}
   .col .down .bar{background:var(--accent);}
-  .col.peak .up .bar{background:var(--good);box-shadow:0 0 0 1px var(--good);}
-  .col.peak .down .bar{background:var(--accent-light);box-shadow:0 0 0 1px var(--accent);}
-  .col-zero{height:1px;background:var(--border-mid);margin:0 2px;}
+  .col .pk{font-size:13px;line-height:1.25;color:var(--ink);font-weight:600;text-align:center;white-space:nowrap;
+    margin:0 -20px;font-variant-numeric:tabular-nums;}
+  .col .up .pk{margin-bottom:3px;}
+  .col .down .pk{margin-top:3px;color:var(--accent-text);}
+  .col-zero{height:1px;background:var(--ink-3);margin:0 2px;}
   .col-axis{display:flex;gap:3px;padding:5px 2px 0;}
-  .col-axis span{flex:1;text-align:center;font-size:9px;color:var(--tertiary);min-width:0;}
+  .col-axis span{flex:1;text-align:center;font-size:13px;color:var(--ink-3);min-width:0;white-space:nowrap;}
+  .col-axis span:empty{visibility:hidden;}
+
+  /* tabs: 선택은 파랑 밑줄 */
+  .tabs{display:flex;gap:4px 20px;flex-wrap:wrap;}
+  .tab{
+    padding:5px 0;cursor:pointer;background:none;border:0;border-bottom:2px solid transparent;
+    color:var(--ink-3);font-size:15px;transition:color .15s ease-out;
+  }
+  .tab:hover{color:var(--ink);}
+  .tab.active{color:var(--ink);font-weight:600;border-bottom-color:var(--accent);}
 
   /* ranking bars */
-  .tabs{display:flex;gap:5px;}
-  .tab{
-    padding:5px 11px;border-radius:7px;cursor:pointer;
-    background:var(--elevated);border:1px solid var(--border);
-    color:var(--muted);font-size:11.5px;font-family:inherit;transition:.14s;
-  }
-  .tab:hover{color:var(--fg-2);}
-  .tab.active{background:var(--deep);color:var(--fg);border-color:var(--accent);}
-  .rb{margin-bottom:11px;}
+  .rank-dir{font-size:13px;color:var(--ink-3);margin:0 0 10px;}
+  .rb{margin-bottom:12px;}
   .rb:last-child{margin-bottom:0;}
-  .rb-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;font-size:12.5px;}
-  .rb-name{color:var(--fg-2);}
-  .rb-name .line{color:var(--tertiary);font-size:10.5px;margin-left:5px;}
-  .rb-val{color:var(--muted);font-variant-numeric:tabular-nums;font-size:11.5px;}
-  .rb-track{height:6px;border-radius:9999px;background:var(--deep);overflow:hidden;}
-  .rb-fill{height:100%;border-radius:9999px;transition:width .6s cubic-bezier(.2,.7,.3,1);}
-  .rb.hi .rb-name{color:var(--fg);font-weight:500;}
+  .rb-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px;font-size:15px;}
+  .rb-name{color:var(--ink-2);}
+  .rb-name .line{color:var(--ink-3);font-size:13px;margin-left:6px;}
+  .rb-val{color:var(--ink-2);font-variant-numeric:tabular-nums;font-size:14px;white-space:nowrap;}
+  .rb-track{height:8px;}
+  .rb-fill{height:100%;}
+  .rb.hi .rb-name{color:var(--ink);font-weight:600;}
+  .rb.hi .rb-val{color:var(--ink);font-weight:600;}
 
   /* map view */
   .map-view{display:flex;flex-direction:column;gap:12px;}
-  .map-frame{height:560px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--deep);}
-  .map-frame iframe{display:block;width:100%;height:100%;border:0;background:#fff;}
-  .map-cap{font-size:11px;color:var(--tertiary);margin:0;flex:none;}
+  .map-frame{height:560px;border:1px solid var(--rule);overflow:hidden;}
+  .map-frame iframe{display:block;width:100%;height:100%;border:0;background:var(--paper);}
+  .map-cap{font-size:14px;color:var(--ink-3);margin:0;flex:none;}
 
-  .stack{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;}
-  .stack span{background:var(--elevated);border:1px solid var(--border);border-radius:9999px;padding:5px 11px;font-size:11.5px;color:var(--fg-2);}
+  .stack{margin:12px 0 0;font-size:14px;color:var(--ink-3);}
 
   @media(max-width:560px){
-    .side{width:60px;padding:14px 8px;}
-    .brand-txt,.nav-item span.lbl,.nav-ext span,.nav-label{display:none;}
+    .side{width:64px;padding:16px 6px;}
+    .brand-txt,.nav-item span.lbl,.nav-label{display:none;}
     .nav-item{justify-content:center;padding:10px 0;}
-    .nav-item.active::before{left:-8px;}
+    .nav-ext{padding:6px 0;font-size:13px;}
     .topbar{padding:14px 16px;}
     .view{padding:14px 16px;}
   }
@@ -169,7 +171,6 @@
   <!-- ── sidebar ── -->
   <aside class="side">
     <div class="brand">
-      <div class="brand-mark"></div>
       <div class="brand-txt"><b>지하철 통근 대시보드</b><span>guro_stream</span></div>
     </div>
     <p class="nav-label">분석</p>
@@ -178,7 +179,7 @@
     <button class="nav-item" data-view="commute"><span class="ico">⇄</span><span class="lbl">출퇴근 흐름</span></button>
     <div class="nav-spacer"></div>
     <div class="nav-foot">
-      <a class="nav-ext" href="https://github.com/buzziru/guro_stream" target="_blank" rel="noopener"><span class="ico">↗</span><span>GitHub 저장소</span></a>
+      <a class="nav-ext" href="https://github.com/buzziru/guro_stream" target="_blank" rel="noopener">GitHub</a>
     </div>
   </aside>
 
@@ -189,16 +190,20 @@
         <h1 id="t-title">개요</h1>
         <p id="t-sub">지하철·기후·인구·버스 통합 데이터로 본 서울 통근 흐름</p>
       </div>
-      <div class="meta">분석 데이터 <b>350만 행 · 50 변수</b><br>1–8호선 · 2022–2023</div>
+      <dl class="meta">
+        <dt>분석 데이터</dt><dd>356만 행, 50개 변수</dd>
+        <dt>노선</dt><dd>1–8호선</dd>
+        <dt>기간</dt><dd>2022–2023</dd>
+      </dl>
     </div>
 
     <!-- overview -->
     <section class="view active" id="view-overview">
       <div class="kpis">
-        <div class="kpi"><p class="k">분석 데이터셋</p><div class="v">350<small>만 행</small></div><div class="bar"><i style="width:100%"></i></div></div>
-        <div class="kpi"><p class="k">통합 변수</p><div class="v">50<small>개</small></div><div class="bar"><i style="width:80%"></i></div></div>
-        <div class="kpi"><p class="k">대상 노선</p><div class="v">1–8<small>호선</small></div><div class="bar"><i style="width:64%"></i></div></div>
-        <div class="kpi"><p class="k">최대 유입 업무지구</p><div class="v" style="font-size:16px">가산디지털단지</div><div class="bar"><i style="width:100%"></i></div></div>
+        <div class="kpi"><p class="k">분석 데이터셋</p><div class="v">356<small>만 행</small></div></div>
+        <div class="kpi"><p class="k">통합 변수</p><div class="v">50<small>개</small></div></div>
+        <div class="kpi"><p class="k">대상 노선</p><div class="v">1–8<small>호선</small></div></div>
+        <div class="kpi"><p class="k">최대 유입 업무지구</p><div class="v" style="font-size:17px">가산디지털단지</div></div>
       </div>
       <div class="ov-grid">
         <div class="card">
@@ -207,12 +212,16 @@
           </div>
           <div class="legend" style="margin-bottom:10px;">
             <span><i style="background:var(--accent)"></i>순하차 — 모여듦(유입)</span>
-            <span><i style="background:var(--good)"></i>순승차 — 빠져나감(유출)</span>
+            <span><i style="background:var(--mark-base)"></i>순승차 — 빠져나감(유출)</span>
           </div>
-          <div class="col-chart" id="guji-chart"></div>
-          <div class="col-zero"></div>
-          <div class="col-axis" id="guji-axis"></div>
-          <p class="card-h note" style="margin:10px 0 0;display:block">아침(08–09시) 하차가 몰리고 저녁(18–19시) 승차가 몰리는 전형적 업무지구 통근 패턴.</p>
+          <div class="chart">
+            <span class="dir up">승차 우세</span>
+            <span class="dir down">하차 우세</span>
+            <div class="col-chart" id="guji-chart"></div>
+            <div class="col-zero"></div>
+            <div class="col-axis" id="guji-axis"></div>
+          </div>
+          <p class="chart-note">아침(08–09시) 하차가 몰리고 저녁(18–19시) 승차가 몰리는 전형적 업무지구 통근 패턴.</p>
         </div>
         <div class="card">
           <div class="card-h">
@@ -222,31 +231,30 @@
             <button class="tab active" data-rank="in">업무지구 유입</button>
             <button class="tab" data-rank="out">주거지 유출</button>
           </div>
+          <p class="rank-dir" id="rank-dir"></p>
           <div id="rank-body"></div>
         </div>
       </div>
 
       <div class="ov-grid even" style="margin-top:14px;">
         <div class="card">
-          <div class="card-h"><h3>처리 · 모델링</h3><span class="note">공공데이터 수집 → 통합 → 모델링</span></div>
+          <div class="card-h"><h3>처리·모델링</h3><span class="note">공공데이터 수집 → 통합 → 모델링</span></div>
           <ul class="steps">
-            <li>역·시간대 복합 키로 4개 영역 조인 → 350만 행·50변수 데이터셋 구축</li>
+            <li>역·시간대 복합 키로 4개 영역 조인 → 356만 행, 50변수 데이터셋 구축</li>
             <li>결측 처리 및 파생 피처 생성 — 요일·공휴일·폭염/한파</li>
             <li>단계별 중간 결과 저장으로 대용량 전처리 파이프라인 안정화</li>
             <li>folium/Leaflet 기반 역별·시간대별 지도 시각화</li>
-            <li>회귀 5종(Linear·Ridge·RandomForest·XGBoost·LightGBM) 교차검증 비교 → LightGBM 최우수</li>
+            <li>회귀 2종(선형회귀, LightGBM) 교차검증 비교 → LightGBM 최우수</li>
           </ul>
-          <div class="stack">
-            <span>Python</span><span>pandas</span><span>scikit-learn</span><span>LightGBM</span><span>folium</span>
-          </div>
+          <p class="stack">Python, pandas, scikit-learn, LightGBM, folium</p>
         </div>
         <div class="card">
           <div class="card-h"><h3>수집·통합 데이터</h3><span class="note">직접 수집</span></div>
           <ul class="srclist">
-            <li><b>지하철</b><span>서울 열린데이터광장 · 역별·시간대별 승하차</span></li>
-            <li><b>기후</b><span>공공데이터포털 · 기온·강수량·습도</span></li>
-            <li><b>인구</b><span>행정안전부 · 동별 주민등록인구</span></li>
-            <li><b>버스</b><span>서울 열린데이터광장 · 노선·정류장(환승 피처)</span></li>
+            <li><b>지하철</b><span>서울 열린데이터광장, 역별·시간대별 승하차</span></li>
+            <li><b>기후</b><span>공공데이터포털, 기온·강수량·습도</span></li>
+            <li><b>인구</b><span>행정안전부, 동별 주민등록인구</span></li>
+            <li><b>버스</b><span>서울 열린데이터광장, 노선·정류장(환승 피처)</span></li>
           </ul>
         </div>
       </div>
@@ -257,11 +265,11 @@
       <div class="map-view">
         <div class="tabs" data-group="ride">
           <button class="tab active" data-target="map-ride-1">역별 이용인원</button>
-          <button class="tab" data-target="map-ride-2">이용인원 · 주민등록인구</button>
+          <button class="tab" data-target="map-ride-2">이용인원과 주민등록인구</button>
         </div>
         <div class="map-frame"><iframe id="map-ride-1" data-src="maps/ridership_total.html" title="역별 이용인원 지도"></iframe></div>
         <div class="map-frame" hidden><iframe id="map-ride-2" data-src="maps/ridership_pop.html" title="이용인원·인구 지도"></iframe></div>
-        <p class="map-cap mono">folium · Leaflet · 원의 크기 = 역별 총 이용인원 · 도심·강남·2호선에 집중</p>
+        <p class="map-cap">원의 크기는 역별 총 이용인원이고 원 색은 서울 지하철 노선색입니다(지도 왼쪽 아래 범례). 도심, 강남, 2호선에 집중합니다. folium(Leaflet)으로 그렸습니다.</p>
       </div>
     </section>
 
@@ -274,7 +282,7 @@
         </div>
         <div class="map-frame"><iframe id="map-diff-1" data-src="maps/diff_morning.html" title="출근 순승하차 지도"></iframe></div>
         <div class="map-frame" hidden><iframe id="map-diff-2" data-src="maps/diff_evening.html" title="퇴근 순승하차 지도"></iframe></div>
-        <p class="map-cap mono">folium · 순승하차 = 승차 − 하차 · 빨강=하차 우세(모여듦) · 파랑=승차 우세(빠져나감)</p>
+        <p class="map-cap">순승하차 = 승차 − 하차. 지도 왼쪽 아래에서 하차 우세(모여듦, 유입)와 승차 우세(빠져나감, 유출)를 하나씩 골라 봅니다. 원의 크기는 순승하차 규모, 배경 회색 단계는 동별 인구입니다.</p>
       </div>
     </section>
 
@@ -321,31 +329,34 @@ const HOURS=['06전','06','07','08','09','10','11','12','13','14','15','16','17'
 const GUJI=[381767,384529,658870,-648930,-375597,96339,193838,216925,94055,28916,-17919,-18546,312566,655699,-353059,-223177,-344052,-457609,-365151,-111735];
 const gMax=Math.max(...GUJI.map(Math.abs));
 const peaks=new Set([3,13]);
+// 막대는 반쪽 높이의 80%까지만 써서 피크 값 라벨 자리를 남긴다
 $('guji-chart').innerHTML=GUJI.map((v,i)=>{
-  const h=(Math.abs(v)/gMax*100).toFixed(1);
-  const up=v>=0?`<div class="bar" style="height:${h}%"></div>`:'';
-  const dn=v<0?`<div class="bar" style="height:${h}%"></div>`:'';
-  return `<div class="${peaks.has(i)?'col peak':'col'}" title="${HOURS[i]}시 · 순승하차 ${won(v)}"><div class="up">${up}</div><div class="down">${dn}</div></div>`;
+  const h=(Math.abs(v)/gMax*80).toFixed(1);
+  const pk=peaks.has(i)?`<div class="pk">${HOURS[i]}시 ${won(v)}</div>`:'';
+  const up=v>=0?`${pk}<div class="bar" style="height:${h}%"></div>`:'';
+  const dn=v<0?`<div class="bar" style="height:${h}%"></div>${pk}`:'';
+  return `<div class="${peaks.has(i)?'col peak':'col'}" title="${HOURS[i]}시, 순승하차 ${won(v)}"><div class="up">${up}</div><div class="down">${dn}</div></div>`;
 }).join('');
 $('guji-axis').innerHTML=HOURS.map((h,i)=>`<span>${i%2===0?h:''}</span>`).join('');
 
 // ── 출근 순승하차 상위 (탭형) ──
 const RANK={
-  in:{color:'var(--accent)', rows:[
+  in:{color:'var(--accent)', dir:'하차 우세(유입), 값은 승차 − 하차', rows:[
     ['가산디지털단지','7호선',-4162646],['역삼','2호선',-3954982],['삼성(무역센터)','2호선',-3755681],
     ['을지로입구','2호선',-3632664],['선릉','2호선',-2972679]]},
-  out:{color:'var(--good)', rows:[
+  out:{color:'var(--mark-base)', dir:'승차 우세(유출), 값은 승차 − 하차', rows:[
     ['신림','2호선',2796628],['까치산','5호선',1616986],['화곡','5호선',1392124],
     ['서울대입구(관악구청)','2호선',1324635],['연신내','3호선',1314197]]},
 };
 function renderRank(key){
-  const {color,rows}=RANK[key];
+  const {color,dir,rows}=RANK[key];
+  $('rank-dir').textContent=dir;
   const max=Math.max(...rows.map(r=>Math.abs(r[2])));
   $('rank-body').innerHTML=rows.map((r,i)=>{
     const w=(Math.abs(r[2])/max*100).toFixed(1);
     return `<div class="rb ${i===0?'hi':''}"><div class="rb-head">
       <span class="rb-name">${r[0]}<span class="line">${r[1]}</span></span>
-      <span class="rb-val mono">${won(r[2])}</span></div>
+      <span class="rb-val">${won(r[2])}</span></div>
       <div class="rb-track"><div class="rb-fill" style="width:${w}%;background:${color}"></div></div></div>`;
   }).join('');
 }

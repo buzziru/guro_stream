@@ -35,6 +35,30 @@
                 .leaflet-container { font-size: 1rem; }
             </style>
         
+
+    <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+      /* portfolio design canon: light surfaces, achromatic tiles, no shadows, blue accent only */
+      .leaflet-tile-pane{filter:grayscale(1) contrast(.7) brightness(1.12);}
+      .leaflet-container{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Malgun Gothic',sans-serif;background:#F9FAF8;word-break:keep-all;}
+      .leaflet-bar,.leaflet-control-layers,.leaflet-touch .leaflet-bar,.leaflet-touch .leaflet-control-layers{box-shadow:none !important;border:1px solid #C5CAC6 !important;border-radius:2px !important;}
+      .leaflet-bar a,.leaflet-bar a:hover{background:#F9FAF8;color:#1C2124;}
+      .leaflet-control-layers{background:#F9FAF8;color:#1C2124;font-size:14px;line-height:1.5;padding:8px 12px;}
+      .leaflet-control-layers-base label{margin:2px 0;}
+      .leaflet-control-layers input{accent-color:#1F77B4;margin-right:6px;}
+      .leaflet-popup-content-wrapper,.leaflet-popup-tip{box-shadow:none !important;background:#F9FAF8;color:#1C2124;border:1px solid #C5CAC6;border-radius:2px;}
+      .leaflet-popup-content{font-size:14px;margin:8px 12px;}
+      .leaflet-control-attribution{background:rgba(249,250,248,.85) !important;color:#5A6266;font-size:13px;}
+      .leaflet-control-attribution a{color:#175F96;}
+      .legend{background:rgba(249,250,248,.9);border:1px solid #C5CAC6;border-radius:2px;}
+      .legend text{fill:#41484C;font-size:13px;font-family:inherit;}
+      .legend .caption{fill:#1C2124;font-weight:600;}
+      .legend .domain,.legend line{stroke:#5A6266;}
+      .line-legend{background:#F9FAF8;border:1px solid #C5CAC6;border-radius:2px;padding:8px 12px;font-size:13px;color:#1C2124;line-height:1.5;}
+      .line-legend b{display:block;font-weight:600;font-size:14px;margin-bottom:4px;}
+      .line-legend span{display:flex;align-items:center;gap:6px;}
+      .line-legend i{width:10px;height:10px;border-radius:50%;flex:none;}
+    </style>
 </head>
 <body>
     
@@ -5903,5 +5927,11 @@
 
         
     
+</script>
+<script>
+    (function(){ var c = L.control({position: 'bottomleft'});
+      c.onAdd = function(){ var d = L.DomUtil.create('div', 'line-legend');
+        d.innerHTML = "<b>호선</b><span><i style=\"background:#0052A4\"></i>1호선</span><span><i style=\"background:#00A84D\"></i>2호선</span><span><i style=\"background:#EF7C1C\"></i>3호선</span><span><i style=\"background:#00A4E3\"></i>4호선</span><span><i style=\"background:#996CAC\"></i>5호선</span><span><i style=\"background:#CD7C2F\"></i>6호선</span><span><i style=\"background:#747F00\"></i>7호선</span><span><i style=\"background:#E6186C\"></i>8호선</span>"; return d; };
+      c.addTo(map_6c3bfbe23ed8a249a6f5aee8f6529b5a); })();
 </script>
 </html>
